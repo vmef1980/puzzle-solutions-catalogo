@@ -25,6 +25,7 @@
       display: inline-block;
       width: 220px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      vertical-align: top;
     }
     .producto img {
       width: 100%;
@@ -58,24 +59,27 @@
 
   <h1>Puzzle Solutions - Catálogo de Productos</h1>
   <div id="catalogo">
-    <!-- Ejemplo de productos -->
+    <!-- Ejemplo de productos con cantidad -->
     <div class="producto">
       <img src="https://via.placeholder.com/200" alt="Producto 1">
       <h3>Producto 1</h3>
       <p>Q100</p>
-      <button onclick="agregar('Producto 1', 100)">Agregar</button>
+      <input type="number" id="cantidad1" min="1" value="1">
+      <button onclick="agregar('Producto 1', 100, 'cantidad1')">Agregar</button>
     </div>
     <div class="producto">
       <img src="https://via.placeholder.com/200" alt="Producto 2">
       <h3>Producto 2</h3>
       <p>Q150</p>
-      <button onclick="agregar('Producto 2', 150)">Agregar</button>
+      <input type="number" id="cantidad2" min="1" value="1">
+      <button onclick="agregar('Producto 2', 150, 'cantidad2')">Agregar</button>
     </div>
     <div class="producto">
       <img src="https://via.placeholder.com/200" alt="Producto 3">
       <h3>Producto 3</h3>
       <p>Q200</p>
-      <button onclick="agregar('Producto 3', 200)">Agregar</button>
+      <input type="number" id="cantidad3" min="1" value="1">
+      <button onclick="agregar('Producto 3', 200, 'cantidad3')">Agregar</button>
     </div>
   </div>
 
@@ -103,9 +107,12 @@
     let pedido = [];
     let total = 0;
 
-    function agregar(nombre, precio) {
-      pedido.push({ nombre, precio });
-      total += precio;
+    function agregar(nombre, precio, inputId) {
+      const cantidad = parseInt(document.getElementById(inputId).value);
+      if (isNaN(cantidad) || cantidad < 1) return;
+
+      pedido.push({ nombre, precio, cantidad });
+      total += precio * cantidad;
       actualizarPedido();
     }
 
@@ -114,7 +121,7 @@
       lista.innerHTML = "";
       pedido.forEach(p => {
         const item = document.createElement("li");
-        item.textContent = `${p.nombre} - Q${p.precio}`;
+        item.textContent = `${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}`;
         lista.appendChild(item);
       });
       document.getElementById("total").textContent = total;
@@ -129,7 +136,7 @@
 
       let mensaje = "Hola, quiero hacer un pedido:\n";
       pedido.forEach(p => {
-        mensaje += `- ${p.nombre} Q${p.precio}\n`;
+        mensaje += `- ${p.nombre} x${p.cantidad} Q${p.precio * p.cantidad}\n`;
       });
       mensaje += `Total: Q${total}\n\n`;
       mensaje += `Nombre: ${nombre}\nTel: ${telefono}\nEmail: ${email}\nDirección: ${direccion}\nPago: ${pago}`;
