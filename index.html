@@ -204,6 +204,7 @@
                 <h3>${producto['Nombre del producto']}</h3>
                 <p>Q${producto['Precio (Q)']}</p>
                 <p style="font-size: 0.9em; color: #555;">${producto.Descripcion}</p>
+                <label for="cantidad${idCounter}" style="display:block; margin-top:8px; font-weight:500;">Cantidad:</label>
                 <input type="number" id="cantidad${idCounter}" min="1" value="1">
                 <button onclick="agregar('${producto['Nombre del producto']}', ${producto['Precio (Q)']}, 'cantidad${idCounter}')">Agregar</button>
               `;
@@ -224,5 +225,6 @@
   
 </body>
 </html>
+
 
 
