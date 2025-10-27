@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Puzzle Solutions - Catálogo</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -24,9 +25,6 @@
     }
     h1, h2 {
       color: #222;
-    }
-    .categoria {
-      margin-bottom: 40px;
     }
     .producto {
       background: #fff;
@@ -89,55 +87,7 @@
     <h1>Puzzle Solutions - Catálogo de Productos</h1>
   </header>
 
-  <h2>Insertos de Policarbonato</h2>
-  <div class="categoria">
-    <div class="producto">
-      <img src="https://kossino.com/wp-content/uploads/2023/01/1-1-1-300x300.jpg" alt="TAPADERA PARA INSERTO 1/1">
-      <h3>TAPADERA PARA INSERTO 1/1</h3>
-      <p>Q85</p>
-      <input type="number" id="cantidad1" min="1" value="1">
-      <button onclick="agregar('TAPADERA PARA INSERTO 1/1', 85, 'cantidad1')">Agregar</button>
-    </div>
-    <div class="producto">
-      <img src="https://kossino.com/wp-content/uploads/2023/01/1-2-1.jpg" alt="TAPADERA PARA INSERTO 1/2">
-      <h3>TAPADERA PARA INSERTO 1/2</h3>
-      <p>Q39</p>
-      <input type="number" id="cantidad2" min="1" value="1">
-      <button onclick="agregar('TAPADERA PARA INSERTO 1/2', 39, 'cantidad2')">Agregar</button>
-    </div>
-    <div class="producto">
-      <img src="https://kossino.com/wp-content/uploads/2023/01/1-3-1.webp" alt="TAPADERA PARA INSERTO 1/3">
-      <h3>TAPADERA PARA INSERTO 1/3</h3>
-      <p>Q29</p>
-      <input type="number" id="cantidad3" min="1" value="1">
-      <button onclick="agregar('TAPADERA PARA INSERTO 1/3', 29, 'cantidad3')">Agregar</button>
-    </div>
-  </div>
-
-  <h2>Insertos de Acero Inoxidable</h2>
-  <div class="categoria">
-    <div class="producto">
-      <img src="https://kossino.com/wp-content/uploads/2025/02/K-CAT-INS-SS-PERF-1-1-6.5-2-300x300.webp" alt="INSERTO PERFORADO 1/1 DE 6.5CM">
-      <h3>INSERTO PERFORADO 1/1 DE 6.5CM</h3>
-      <p>Q115</p>
-      <input type="number" id="cantidad4" min="1" value="1">
-      <button onclick="agregar('INSERTO PERFORADO 1/1 DE 6.5CM', 115, 'cantidad4')">Agregar</button>
-    </div>
-    <div class="producto">
-      <img src="https://kossino.com/wp-content/uploads/2025/02/K-CAT-INS-SS-PERF-1-1-10-1.webp" alt="INSERTO PERFORADO 1/1 DE 10CM">
-      <h3>INSERTO PERFORADO 1/1 DE 10CM</h3>
-      <p>Q125</p>
-      <input type="number" id="cantidad5" min="1" value="1">
-      <button onclick="agregar('INSERTO PERFORADO 1/1 DE 10CM', 125, 'cantidad5')">Agregar</button>
-    </div>
-    <div class="producto">
-      <img src="https://kossino.com/wp-content/uploads/2025/02/K-CAT-INS-SS-PERF-1-1-15-2.webp" alt="INSERTO PERFORADO 1/1 DE 15CM">
-      <h3>INSERTO PERFORADO 1/1 DE 15CM</h3>
-      <p>Q145</p>
-      <input type="number" id="cantidad6" min="1" value="1">
-      <button onclick="agregar('INSERTO PERFORADO 1/1 DE 15CM', 145, 'cantidad6')">Agregar</button>
-    </div>
-  </div>
+  <div id="catalogo"></div>
 
   <div id="pedido">
     <h2>Resumen del Pedido</h2>
@@ -166,28 +116,40 @@
     <div id="mensajeCliente"></div>
   </div>
 
-   <script>
+  <div style="margin-top: 40px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ccc;">
+    <h2>Información de Envíos</h2>
+    <p><strong>Costos aproximados:</strong> entre Q25 y Q50 dentro de Ciudad de Guatemala. Para otras zonas, consultar vía WhatsApp.</p>
+    <p><strong>Disponibilidad:</strong> La existencia puede variar según la demanda. Te confirmaremos disponibilidad al recibir tu pedido.</p>
+  </div>
+
+  <script>
     let pedido = [];
     let total = 0;
 
     function agregar(nombre, precio, inputId) {
       const cantidad = parseInt(document.getElementById(inputId).value);
       if (isNaN(cantidad) || cantidad < 1) return;
-
       pedido.push({ nombre, precio, cantidad });
-      total += precio * cantidad;
       actualizarPedido();
     }
 
     function actualizarPedido() {
       const lista = document.getElementById("listaPedido");
       lista.innerHTML = "";
-      pedido.forEach(p => {
+      total = 0;
+      pedido.forEach((p, index) => {
         const item = document.createElement("li");
-        item.textContent = `${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}`;
+        item.innerHTML = `${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}
+          <button onclick="eliminarProducto(${index})">❌</button>`;
         lista.appendChild(item);
+        total += p.precio * p.cantidad;
       });
       document.getElementById("total").textContent = total;
+    }
+
+    function eliminarProducto(index) {
+      pedido.splice(index, 1);
+      actualizarPedido();
     }
 
     function enviarWhatsApp() {
@@ -215,12 +177,44 @@
         mensaje += `\nComentarios: ${comentarios}`;
       }
 
-      // Enviar por WhatsApp
       const url = `https://wa.me/50241084481?text=${encodeURIComponent(mensaje)}`;
       window.open(url, "_blank");
 
-      // Mostrar copia para el cliente
       document.getElementById("mensajeCliente").textContent = mensaje;
       document.getElementById("copiaCliente").style.display = "block";
     }
+
+    // Cargar productos desde CSV
+    fetch('Catalogo-v1.csv')
+      .then(response => response.text())
+      .then(csv => {
+        Papa.parse(csv, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            const catalogo = document.getElementById("catalogo");
+            let idCounter = 1;
+            results.data.forEach(producto => {
+              if (producto.Estado.trim().toLowerCase() !== "disponible") return;
+
+              const div = document.createElement("div");
+              div.className = "producto";
+              div.innerHTML = `
+                <img src="${producto.Imagen}" alt="${producto['Nombre del producto']}">
+                <h3>${producto['Nombre del producto']}</h3>
+                <p>Q${producto['Precio (Q)']}</p>
+                <p style="font-size: 0.9em; color: #555;">${producto.Descripcion}</p>
+                <input type="number" id="cantidad${idCounter}" min="1" value="1">
+                <button onclick="agregar('${producto['Nombre del producto']}', ${producto['Precio (Q)']}, 'cantidad${idCounter}')">Agregar</button>
+              `;
+              catalogo.append
+              catalogo.appendChild(div);
+              idCounter++;
+            });
+          }
+        });
+      });
   </script>
+
+</body>
+</html>
