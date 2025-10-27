@@ -13,11 +13,8 @@
   <body>
 
 <header>
-  <h1>Catálogo Puzzle Solutions</h1>
-  <label for="subcategoryFilter">Filtrar por subcategoría:</label>
-  <select id="subcategoryFilter">
-    <option value="">Todas</option>
-  </select>
+  <img src="PuzzleSolutions.png" alt="Logo Puzzle Solutions">
+  <h1>Puzzle Solutions - Catálogo de Productos</h1>
 </header>
 
 <input type="text" id="busqueda" placeholder="Buscar producto..." style="width:100%; padding:8px; margin-bottom:20px;">
@@ -183,27 +180,6 @@
     });
 });
 
-const subcategoryFilter = document.getElementById('subcategoryFilter');
-
-// Extraer subcategorías únicas del CSV
-function populateSubcategories(products) {
-  const subcategories = [...new Set(products.map(p => p.subcategory))].sort();
-  subcategories.forEach(sub => {
-    const option = document.createElement('option');
-    option.value = sub;
-    option.textContent = sub;
-    subcategoryFilter.appendChild(option);
-  });
-}
-
-// Filtrar productos por subcategoría seleccionada
-subcategoryFilter.addEventListener('change', () => {
-  const selected = subcategoryFilter.value;
-  const filtered = selected ? products.filter(p => p.subcategory === selected) : products;
-  renderProducts(filtered);
-});
-
-  
 </script>
  
 <footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
@@ -236,7 +212,6 @@ subcategoryFilter.addEventListener('change', () => {
 
 </body>
 </html>
-
 
 
 
