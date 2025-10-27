@@ -166,7 +166,7 @@
     <div id="mensajeCliente"></div>
   </div>
 
-  <script>
+   <script>
     let pedido = [];
     let total = 0;
 
@@ -175,3 +175,52 @@
       if (isNaN(cantidad) || cantidad < 1) return;
 
       pedido.push({ nombre, precio, cantidad });
+      total += precio * cantidad;
+      actualizarPedido();
+    }
+
+    function actualizarPedido() {
+      const lista = document.getElementById("listaPedido");
+      lista.innerHTML = "";
+      pedido.forEach(p => {
+        const item = document.createElement("li");
+        item.textContent = `${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}`;
+        lista.appendChild(item);
+      });
+      document.getElementById("total").textContent = total;
+    }
+
+    function enviarWhatsApp() {
+      const nombre = document.getElementById("nombre").value.trim();
+      const telefono = document.getElementById("telefono").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const direccion = document.getElementById("direccion").value.trim();
+      const pago = document.getElementById("pago").value;
+      const comentarios = document.getElementById("comentarios").value.trim();
+
+      if (!nombre || !telefono || !email || !direccion || !pago || pedido.length === 0) {
+        alert("Por favor completa todos los campos obligatorios y agrega al menos un producto.");
+        return;
+      }
+
+      if (!confirm("¿Estás seguro de que deseas confirmar tu pedido?")) return;
+
+      let mensaje = "Hola, quiero hacer un pedido:\n";
+      pedido.forEach(p => {
+        mensaje += `- ${p.nombre} x${p.cantidad} Q${p.precio * p.cantidad}\n`;
+      });
+      mensaje += `Total: Q${total}\n\n`;
+      mensaje += `Nombre: ${nombre}\nTel: ${telefono}\nEmail: ${email}\nDirección: ${direccion}\nPago: ${pago}`;
+      if (comentarios !== "") {
+        mensaje += `\nComentarios: ${comentarios}`;
+      }
+
+      // Enviar por WhatsApp
+      const url = `https://wa.me/50241084481?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, "_blank");
+
+      // Mostrar copia para el cliente
+      document.getElementById("mensajeCliente").textContent = mensaje;
+      document.getElementById("copiaCliente").style.display = "block";
+    }
+  </script>
