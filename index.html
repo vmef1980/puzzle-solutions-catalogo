@@ -13,6 +13,15 @@
       margin: 0;
       padding: 20px;
     }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    header img {
+      height: 50px;
+    }
     h1, h2 {
       color: #222;
     }
@@ -31,6 +40,10 @@
       width: 100%;
       border-radius: 6px;
     }
+    .producto input[type="number"] {
+      width: 100%;
+      margin-top: 8px;
+    }
     button {
       background-color: #e63946;
       color: white;
@@ -38,16 +51,19 @@
       padding: 8px 12px;
       border-radius: 4px;
       cursor: pointer;
+      margin-top: 8px;
+      width: 100%;
     }
     button:hover {
       background-color: #d62839;
     }
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 8px;
       margin-top: 8px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      box-sizing: border-box;
     }
     #pedido, #formulario {
       margin-top: 30px;
@@ -57,9 +73,13 @@
 </head>
 <body>
 
-  <h1>Puzzle Solutions - Catálogo de Productos</h1>
+  <header>
+    <img src="https://i.imgur.com/2ZCqZ5P.png" alt="Logo Puzzle Solutions">
+    <h1>Puzzle Solutions - Catálogo de Productos</h1>
+  </header>
+
   <div id="catalogo">
-    <!-- Ejemplo de productos con cantidad -->
+    <!-- Productos de ejemplo -->
     <div class="producto">
       <img src="https://via.placeholder.com/200" alt="Producto 1">
       <h3>Producto 1</h3>
@@ -99,6 +119,7 @@
       <option value="Efectivo">Efectivo</option>
       <option value="Transferencia">Transferencia</option>
     </select>
+    <textarea id="comentarios" placeholder="Comentarios adicionales (opcional)"></textarea>
     <br><br>
     <button onclick="enviarWhatsApp()">Enviar pedido por WhatsApp</button>
   </div>
@@ -128,11 +149,14 @@
     }
 
     function enviarWhatsApp() {
+      if (!confirm("¿Estás seguro de que deseas confirmar tu pedido?")) return;
+
       const nombre = document.getElementById("nombre").value;
       const telefono = document.getElementById("telefono").value;
       const email = document.getElementById("email").value;
       const direccion = document.getElementById("direccion").value;
       const pago = document.getElementById("pago").value;
+      const comentarios = document.getElementById("comentarios").value;
 
       let mensaje = "Hola, quiero hacer un pedido:\n";
       pedido.forEach(p => {
@@ -140,6 +164,9 @@
       });
       mensaje += `Total: Q${total}\n\n`;
       mensaje += `Nombre: ${nombre}\nTel: ${telefono}\nEmail: ${email}\nDirección: ${direccion}\nPago: ${pago}`;
+      if (comentarios.trim() !== "") {
+        mensaje += `\nComentarios: ${comentarios}`;
+      }
 
       const url = `https://wa.me/50241084481?text=${encodeURIComponent(mensaje)}`;
       window.open(url, "_blank");
