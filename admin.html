@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administración de Catálogo - Puzzle Solutions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #222;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    input[type="file"] {
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      font-size: 0.9em;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .note {
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Administración de Catálogo</h1>
+
+  <div class="card">
+    <h2>📁 Subir archivo CSV</h2>
+    <p>Selecciona tu archivo actualizado con los productos. Este archivo debe tener la siguiente estructura:</p>
+    <ul>
+      <li><strong>Subcategoria</strong></li>
+      <li><strong>Nombre del producto</strong></li>
+      <li><strong>Precio (Q)</strong></li>
+      <li><strong>Imagen</strong> (URL completa)</li>
+      <li><strong>Descripcion</strong></li>
+      <li><strong>Estado</strong> (Disponible o Agotado)</li>
+    </ul>
+    <p class="note">⚠️ Esta página no guarda el archivo. Debes subirlo manualmente a tu repositorio en GitHub como <code>Catalogo-v1.csv</code>.</p>
+    <input type="file" id="csvFile" accept=".csv" />
+    <div id="preview"></div>
+  </div>
+
+  <div class="card">
+    <h2>📦 Instrucciones para actualizar en GitHub</h2>
+    <ol>
+      <li>Ve a tu repositorio: <strong>puzzle-solutions-catalogo</strong></li>
+      <li>Haz clic en <strong>Add file → Upload files</strong></li>
+      <li>Selecciona tu archivo <code>Catalogo-v1.csv</code></li>
+      <li>Haz clic en <strong>Commit changes</strong></li>
+      <li>Tu catálogo se actualizará automáticamente en la página principal</li>
+    </ol>
+  </div>
+
+  <script>
+    document.getElementById("csvFile").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          const preview = document.getElementById("preview");
+          const table = document.createElement("table");
+          const thead = document.createElement("thead");
+          const tbody = document.createElement("tbody");
+
+          const headers = Object.keys(results.data[0]);
+          const headerRow = document.createElement("tr");
+          headers.forEach(h => {
+            const th = document.createElement("th");
+            th.textContent = h;
+            headerRow.appendChild(th);
+          });
+          thead.appendChild(headerRow);
+
+          results.data.forEach(row => {
+            const tr = document.createElement("tr");
+            headers.forEach(h => {
+              const td = document.createElement("td");
+              td.textContent = row[h];
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+
+          table.appendChild(thead);
+          table.appendChild(tbody);
+          preview.innerHTML = "<h3>Vista previa del archivo:</h3>";
+          preview.appendChild(table);
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
