@@ -193,6 +193,15 @@
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
+          // Normalizar encabezados a minúsculas
+          results.data = results.data.map(row => {
+            const normalizado = {};
+            Object.keys(row).forEach(key => {
+              normalizado[key.trim().toLowerCase()] = row[key];
+            });
+            return normalizado;
+          });
+
           const catalogo = document.getElementById("catalogo");
           const grupos = {};
           results.data.forEach(producto => {
@@ -229,9 +238,11 @@
     })
     .catch(error => {
       console.error("Error al cargar el archivo CSV:", error);
-      document.getElementById("catalogo").innerHTML = "<p style='color:red;'>No se pudo cargar el catálogo. Verifica que el archivo Catalogo-v1.csv esté en la raíz del repositorio.</p>";
+      document.getElementById("catalogo").innerHTML = "<p style='color:red;'>No se pudo cargar el catálogo. Verifica que el archivo Catalogo-v3.csv esté en la raíz del repositorio.</p>";
     });
 </script>
+
+  
 <footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
   <p>Este sitio ha sido desarrollado por <strong>PuzzleSolutions®</strong>, marca registrada.</p>
   <p>Contacto: <a href="mailto:vmef1980@gmail.com" style="color: #f1f1f1; text-decoration: underline;">vmef1980@gmail.com</a></p>
@@ -240,6 +251,7 @@
   
 </body>
 </html>
+
 
 
 
