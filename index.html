@@ -225,7 +225,7 @@
                 <p>Q${producto['precio (q)']}</p>
                 <p style="font-size: 0.9em; color: #555;">${producto.descripcion}</p>
                 <label for="cantidad${idCounter}" style="display:block; margin-top:8px; font-weight:500;">Cantidad:</label>
-                <input type="number" id="cantidad${idCounter}" min="1" value="1">
+                <input type="number" id="cantidad${idCounter}" min="1" value="1" style="width: 60px;">
                 <button onclick="agregar('${producto['nombre del producto']}', ${producto['precio (q)']}, 'cantidad${idCounter}', '${producto.codigo}')">Agregar</button>
               `;
               section.appendChild(div);
@@ -251,6 +251,7 @@
   
 </body>
 </html>
+
 
 
 
