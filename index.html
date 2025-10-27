@@ -186,7 +186,7 @@
   }
 
   // Cargar productos desde CSV y agrupar por subcategoría
-  fetch('Catalogo-v1.csv')
+  fetch('Catalogo-v2.csv')
     .then(response => response.text())
     .then(csv => {
       Papa.parse(csv, {
@@ -248,6 +248,7 @@
   
 </body>
 </html>
+
 
 
 
