@@ -122,101 +122,124 @@
     <p><strong>Disponibilidad:</strong> La existencia puede variar según la demanda. Te confirmaremos disponibilidad al recibir tu pedido.</p>
   </div>
 
-  <script>
-    let pedido = [];
-    let total = 0;
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script>
+  let pedido = [];
+  let total = 0;
 
-    function agregar(nombre, precio, inputId) {
-      const cantidad = parseInt(document.getElementById(inputId).value);
-      if (isNaN(cantidad) || cantidad < 1) return;
-      pedido.push({ nombre, precio, cantidad });
-      actualizarPedido();
+  function agregar(nombre, precio, inputId) {
+    const cantidad = parseInt(document.getElementById(inputId).value);
+    if (isNaN(cantidad) || cantidad < 1) return;
+    pedido.push({ nombre, precio, cantidad });
+    actualizarPedido();
+  }
+
+  function actualizarPedido() {
+    const lista = document.getElementById("listaPedido");
+    lista.innerHTML = "";
+    total = 0;
+    pedido.forEach((p, index) => {
+      const item = document.createElement("li");
+      item.innerHTML = `${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}
+        <button onclick="eliminarProducto(${index})">❌</button>`;
+      lista.appendChild(item);
+      total += p.precio * p.cantidad;
+    });
+    document.getElementById("total").textContent = total;
+  }
+
+  function eliminarProducto(index) {
+    pedido.splice(index, 1);
+    actualizarPedido();
+  }
+
+  function enviarWhatsApp() {
+    const nombre = document.getElementById("nombre").value.trim();
+    const telefono = document.getElementById("telefono").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const direccion = document.getElementById("direccion").value.trim();
+    const pago = document.getElementById("pago").value;
+    const comentarios = document.getElementById("comentarios").value.trim();
+
+    if (!nombre || !telefono || !email || !direccion || !pago || pedido.length === 0) {
+      alert("Por favor completa todos los campos obligatorios y agrega al menos un producto.");
+      return;
     }
 
-    function actualizarPedido() {
-      const lista = document.getElementById("listaPedido");
-      lista.innerHTML = "";
-      total = 0;
-      pedido.forEach((p, index) => {
-        const item = document.createElement("li");
-        item.innerHTML = `${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}
-          <button onclick="eliminarProducto(${index})">❌</button>`;
-        lista.appendChild(item);
-        total += p.precio * p.cantidad;
-      });
-      document.getElementById("total").textContent = total;
+    if (!confirm("¿Estás seguro de que deseas confirmar tu pedido?")) return;
+
+    let mensaje = "Hola, quiero hacer un pedido:\n";
+    pedido.forEach(p => {
+      mensaje += `- ${p.nombre} x${p.cantidad} Q${p.precio * p.cantidad}\n`;
+    });
+    mensaje += `Total: Q${total}\n\n`;
+    mensaje += `Nombre: ${nombre}\nTel: ${telefono}\nEmail: ${email}\nDirección: ${direccion}\nPago: ${pago}`;
+    if (comentarios !== "") {
+      mensaje += `\nComentarios: ${comentarios}`;
     }
 
-    function eliminarProducto(index) {
-      pedido.splice(index, 1);
-      actualizarPedido();
-    }
+    const url = `https://wa.me/50241084481?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, "_blank");
 
-    function enviarWhatsApp() {
-      const nombre = document.getElementById("nombre").value.trim();
-      const telefono = document.getElementById("telefono").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const direccion = document.getElementById("direccion").value.trim();
-      const pago = document.getElementById("pago").value;
-      const comentarios = document.getElementById("comentarios").value.trim();
+    document.getElementById("mensajeCliente").textContent = mensaje;
+    document.getElementById("copiaCliente").style.display = "block";
+  }
 
-      if (!nombre || !telefono || !email || !direccion || !pago || pedido.length === 0) {
-        alert("Por favor completa todos los campos obligatorios y agrega al menos un producto.");
-        return;
-      }
+  // Cargar productos desde CSV y agrupar por subcategoría
+  fetch('Catalogo-v1.csv')
+    .then(response => response.text())
+    .then(csv => {
+      Papa.parse(csv, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          const catalogo = document.getElementById("catalogo");
+          const grupos = {};
+          results.data.forEach(producto => {
+            if (!producto || !producto.Estado || producto.Estado.trim().toLowerCase() !== "disponible") return;
+            const cat = producto.Subcategoria || "Otros";
+            if (!grupos[cat]) grupos[cat] = [];
+            grupos[cat].push(producto);
+          });
 
-      if (!confirm("¿Estás seguro de que deseas confirmar tu pedido?")) return;
-
-      let mensaje = "Hola, quiero hacer un pedido:\n";
-      pedido.forEach(p => {
-        mensaje += `- ${p.nombre} x${p.cantidad} Q${p.precio * p.cantidad}\n`;
-      });
-      mensaje += `Total: Q${total}\n\n`;
-      mensaje += `Nombre: ${nombre}\nTel: ${telefono}\nEmail: ${email}\nDirección: ${direccion}\nPago: ${pago}`;
-      if (comentarios !== "") {
-        mensaje += `\nComentarios: ${comentarios}`;
-      }
-
-      const url = `https://wa.me/50241084481?text=${encodeURIComponent(mensaje)}`;
-      window.open(url, "_blank");
-
-      document.getElementById("mensajeCliente").textContent = mensaje;
-      document.getElementById("copiaCliente").style.display = "block";
-    }
-
-    // Cargar productos desde CSV
-    fetch('Catalogo-v1.csv')
-      .then(response => response.text())
-      .then(csv => {
-        Papa.parse(csv, {
-          header: true,
-          skipEmptyLines: true,
-          complete: function(results) {
-            const catalogo = document.getElementById("catalogo");
-            let idCounter = 1;
-            results.data.forEach(producto => {
-              if (producto.Estado.trim().toLowerCase() !== "disponible") return;
-
+          let idCounter = 1;
+          Object.keys(grupos).forEach(subcategoria => {
+            const section = document.createElement("div");
+            section.innerHTML = `<h2>${subcategoria}</h2>`;
+            grupos[subcategoria].forEach(producto => {
               const div = document.createElement("div");
               div.className = "producto";
               div.innerHTML = `
                 <img src="${producto.Imagen}" alt="${producto['Nombre del producto']}">
                 <h3>${producto['Nombre del producto']}</h3>
+                <p style="font-size: 0.85em; color: #777;">Código: ${producto.Código}</p>
                 <p>Q${producto['Precio (Q)']}</p>
                 <p style="font-size: 0.9em; color: #555;">${producto.Descripcion}</p>
                 <label for="cantidad${idCounter}" style="display:block; margin-top:8px; font-weight:500;">Cantidad:</label>
                 <input type="number" id="cantidad${idCounter}" min="1" value="1">
                 <button onclick="agregar('${producto['Nombre del producto']}', ${producto['Precio (Q)']}, 'cantidad${idCounter}')">Agregar</button>
               `;
-              catalogo.append
-              catalogo.appendChild(div);
+              section.appendChild(div);
               idCounter++;
             });
-          }
-        });
+            catalogo.appendChild(section);
+          });
+        }
       });
-  </script>
+    })
+    .catch(error => {
+      console.error("Error al cargar el archivo CSV:", error);
+      document.getElementById("catalogo").innerHTML = "<p style='color:red;'>No se pudo cargar el catálogo. Verifica que el archivo Catalogo-v1.csv esté en la raíz del repositorio.</p>";
+    });
+</script>
 
+<footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
+  <p>Este sitio ha sido desarrollado por <strong>PuzzleSolutions®</strong>, marca registrada.</p>
+  <p>Contacto: <a href="mailto:vmef1980@gmail.com" style="color: #f1f1f1; text-decoration: underline;">vmef1980@gmail.com</a></p>
+  <p style="margin-top: 10px;">© 2025 PuzzleSolutions. Todos los derechos reservados.</p>
+</footer>
+
+  
   <footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
     <p>Este sitio ha sido desarrollado por <strong>PuzzleSolutions®</strong>, marca registrada.</p>
     <p>Contacto: <a href="mailto:vmef1980@gmail.com" style="color: #f1f1f1; text-decoration: underline;">vmef1980@gmail.com</a></p>
@@ -225,6 +248,7 @@
   
 </body>
 </html>
+
 
 
 
