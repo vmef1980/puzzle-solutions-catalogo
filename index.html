@@ -82,25 +82,12 @@
 </head>
 <body>
 
-<header>
-  <button id="menu-toggle">☰</button>
-  <img src="PuzzleSolutions.png" alt="Logo Puzzle Solutions">
-  <h1>Puzzle Solutions - Catálogo de Productos</h1>
-</header>
+  <header>
+    <img src="PuzzleSolutions.png" alt="Logo Puzzle Solutions">
+    <h1>Puzzle Solutions - Catálogo de Productos</h1>
+  </header>
 
-<nav id="menu-lateral" class="oculto">
-  <a href="#catalogo">Catálogo</a>
-  <a href="#pedido">Resumen</a>
-  <a href="#formulario">Datos del Cliente</a>
-</nav>
-
-<aside id="filtros-catalogo" style="margin: 20px 0;">
-  <h3>Filtrar por categoría</h3>
-  <div id="contenedor-filtros"></div>
-</aside>
-
-<div id="catalogo"></div>
-
+  <div id="catalogo"></div>
 
   <div id="pedido">
     <h2>Resumen del Pedido</h2>
@@ -206,6 +193,7 @@
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
+          // Normalizar encabezados a minúsculas
           results.data = results.data.map(row => {
             const normalizado = {};
             Object.keys(row).forEach(key => {
@@ -223,23 +211,6 @@
             grupos[cat].push(producto);
           });
 
-          const contenedorFiltros = document.getElementById("contenedor-filtros");
-          Object.keys(grupos).forEach(cat => {
-            const label = document.createElement("label");
-            label.style.marginRight = "10px";
-            label.innerHTML = `<input type="checkbox" value="${cat}" checked> ${cat}`;
-            contenedorFiltros.appendChild(label);
-          });
-
-          document.querySelectorAll('#contenedor-filtros input[type="checkbox"]').forEach(cb => {
-            cb.addEventListener('change', () => {
-              const activos = Array.from(document.querySelectorAll('#contenedor-filtros input[type="checkbox"]:checked')).map(c => c.value);
-              document.querySelectorAll('[data-subcategoria]').forEach(p => {
-                p.style.display = activos.includes(p.dataset.subcategoria) ? 'block' : 'none';
-              });
-            });
-          });
-
           let idCounter = 1;
           Object.keys(grupos).forEach(subcategoria => {
             const section = document.createElement("div");
@@ -247,7 +218,6 @@
             grupos[subcategoria].forEach(producto => {
               const div = document.createElement("div");
               div.className = "producto";
-              div.dataset.subcategoria = subcategoria;
               div.innerHTML = `
                 <img src="${producto.imagen}" alt="${producto['nombre del producto']}">
                 <h3>${producto['nombre del producto']}</h3>
@@ -270,22 +240,7 @@
       console.error("Error al cargar el archivo CSV:", error);
       document.getElementById("catalogo").innerHTML = "<p style='color:red;'>No se pudo cargar el catálogo. Verifica que el archivo Catalogo-v3.csv esté en la raíz del repositorio.</p>";
     });
-
-  // Menú lateral móvil
-  document.getElementById('menu-toggle').addEventListener('click', () => {
-    const menu = document.getElementById('menu-lateral');
-    menu.classList.toggle('activo');
-    menu.style.transform = menu.classList.contains('activo') ? 'translateX(0)' : 'translateX(-100%)';
-  });
 </script>
-
-<style>
-  @media (min-width: 769px) {
-    #menu-toggle, #menu-lateral {
-      display: none !important;
-    }
-  }
-</style>
  
 <footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
   <p>Este sitio ha sido desarrollado por <strong>PuzzleSolutions®</strong>, marca registrada.</p>
