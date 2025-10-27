@@ -122,15 +122,15 @@
     <p><strong>Disponibilidad:</strong> La existencia puede variar según la demanda. Te confirmaremos disponibilidad al recibir tu pedido.</p>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 <script>
   let pedido = [];
   let total = 0;
 
-  function agregar(nombre, precio, inputId) {
+  function agregar(nombre, precio, inputId, codigo) {
     const cantidad = parseInt(document.getElementById(inputId).value);
     if (isNaN(cantidad) || cantidad < 1) return;
-    pedido.push({ nombre, precio, cantidad });
+    pedido.push({ nombre, precio, cantidad, codigo });
     actualizarPedido();
   }
 
@@ -140,7 +140,7 @@
     total = 0;
     pedido.forEach((p, index) => {
       const item = document.createElement("li");
-      item.innerHTML = `${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}
+      item.innerHTML = `[${p.codigo}] ${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}
         <button onclick="eliminarProducto(${index})">❌</button>`;
       lista.appendChild(item);
       total += p.precio * p.cantidad;
@@ -170,7 +170,7 @@
 
     let mensaje = "Hola, quiero hacer un pedido:\n";
     pedido.forEach(p => {
-      mensaje += `- ${p.nombre} x${p.cantidad} Q${p.precio * p.cantidad}\n`;
+      mensaje += `- [${p.codigo}] ${p.nombre} x${p.cantidad} Q${p.precio * p.cantidad}\n`;
     });
     mensaje += `Total: Q${total}\n\n`;
     mensaje += `Nombre: ${nombre}\nTel: ${telefono}\nEmail: ${email}\nDirección: ${direccion}\nPago: ${pago}`;
@@ -186,7 +186,7 @@
   }
 
   // Cargar productos desde CSV y agrupar por subcategoría
-  fetch('Catalogo-v2.csv')
+  fetch('Catalogo-v1.csv')
     .then(response => response.text())
     .then(csv => {
       Papa.parse(csv, {
@@ -217,7 +217,7 @@
                 <p style="font-size: 0.9em; color: #555;">${producto.Descripcion}</p>
                 <label for="cantidad${idCounter}" style="display:block; margin-top:8px; font-weight:500;">Cantidad:</label>
                 <input type="number" id="cantidad${idCounter}" min="1" value="1">
-                <button onclick="agregar('${producto['Nombre del producto']}', ${producto['Precio (Q)']}, 'cantidad${idCounter}')">Agregar</button>
+                <button onclick="agregar('${producto['Nombre del producto']}', ${producto['Precio (Q)']}, 'cantidad${idCounter}', '${producto.Código}')">Agregar</button>
               `;
               section.appendChild(div);
               idCounter++;
@@ -241,6 +241,7 @@
   
 </body>
 </html>
+
 
 
 
