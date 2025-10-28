@@ -1,4 +1,4 @@
-    body {
+body {
       font-family: 'Poppins', sans-serif;
       background-color: #f8f9fa;
       color: #333;
@@ -102,4 +102,24 @@
 #pedidoTotal {
   font-weight: bold;
   font-size: 16px;
+}
+
+.mensaje-agregado {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  font-weight: bold;
+  z-index: 1000;
+  animation: fadeOut 2s ease forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
 }
