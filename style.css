@@ -1,4 +1,4 @@
-body {
+    body {
       font-family: 'Poppins', sans-serif;
       background-color: #f8f9fa;
       color: #333;
@@ -69,57 +69,3 @@ body {
       border-radius: 6px;
       white-space: pre-wrap;
     }
-
-#pedidoVista {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  width: 250px;
-  background: #f9f9f9;
-  border: 1px solid #ccc;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  z-index: 999;
-}
-
-#pedidoVista h2 {
-  margin-top: 0;
-  font-size: 18px;
-}
-
-#pedidoLista {
-  list-style: none;
-  padding-left: 0;
-  margin-bottom: 10px;
-}
-
-#pedidoLista li {
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-#pedidoTotal {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.mensaje-agregado {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #4caf50;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  font-weight: bold;
-  z-index: 1000;
-  animation: fadeOut 2s ease forwards;
-}
-
-@keyframes fadeOut {
-  0% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; }
-}
