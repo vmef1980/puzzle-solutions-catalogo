@@ -1,7 +1,7 @@
-@import url('layout.css');
-@import url('cards.css');
-@import url('aside.css');
-@import url('form.css');
+@import url('./layout.css');
+@import url('./cards.css');
+@import url('./aside.css');
+@import url('./form.css');
 
 /* Tipografía base */
 body {
@@ -10,4 +10,5 @@ body {
   margin: 0;
   padding: 0;
   color: #333;
+
 }
