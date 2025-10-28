@@ -313,8 +313,27 @@ function actualizarPedido() {
     detalle.innerHTML = `<p><strong>Productos en el pedido:</strong><br>${resumen}</p>`;
   }
 
-  // 👇 Agrega esta línea al final
-  actualizarVistaPedido();
+  function actualizarVistaPedido() {
+  const lista = document.getElementById("pedidoLista");
+  const totalTexto = document.getElementById("pedidoTotal");
+
+  if (!lista || !totalTexto) return;
+
+  lista.innerHTML = "";
+  let totalVista = 0;
+
+  pedido.forEach(p => {
+    const subtotal = (p.precio * p.cantidad).toFixed(2);
+    const item = document.createElement("li");
+    item.textContent = `${p.nombre} x${p.cantidad} = Q${subtotal}`;
+    lista.appendChild(item);
+    totalVista += p.precio * p.cantidad;
+  });
+
+  totalTexto.textContent = `Total: Q${totalVista.toFixed(2)}`;
+}
+
+  
 }
   
 </script>
@@ -355,6 +374,7 @@ function actualizarPedido() {
   
 </body>
 </html>
+
 
 
 
