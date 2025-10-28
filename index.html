@@ -317,11 +317,14 @@ function actualizarPedido() {
   actualizarVistaPedido();
 }
 
-  function actualizarVistaPedido() {
+ function actualizarVistaPedido() {
   const lista = document.getElementById("pedidoLista");
   const totalTexto = document.getElementById("pedidoTotal");
 
-  if (!lista || !totalTexto) return;
+  if (!lista || !totalTexto) {
+    console.warn("No se encontró el aside del pedido.");
+    return;
+  }
 
   lista.innerHTML = "";
   let totalVista = 0;
@@ -378,6 +381,7 @@ function actualizarPedido() {
   
 </body>
 </html>
+
 
 
 
