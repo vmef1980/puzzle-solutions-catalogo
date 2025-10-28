@@ -89,12 +89,16 @@ fetch('data/Catalogo-v3.csv')
             const boton = document.createElement("button");
             boton.textContent = "Agregar";
             boton.addEventListener("click", () => {
-              agregar(
-                producto["nombre del producto"],
-                parseFloat(producto["precio (q)"]),
-                input,
-                producto.codigo
-              );
+              if (input && input instanceof HTMLInputElement) {
+                agregar(
+                  producto["nombre del producto"],
+                  parseFloat(producto["precio (q)"]),
+                  input,
+                  producto.codigo
+                );
+              } else {
+                console.warn("Input no válido o no encontrado:", input);
+              }
             });
 
             div.appendChild(img);
