@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Puzzle Solutions - Catálogo</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 
 <body>
@@ -15,7 +15,7 @@
     <h1>Puzzle Solutions - Catálogo de Productos</h1>
   </header>
   
-  <input type="text" id="busqueda" placeholder="Buscar producto..." style="width:100%; padding:8px; margin-bottom:20px;">
+  <input type="text" id="busqueda" placeholder="Buscar producto..." style="width:50%; padding:8px; margin-bottom:20px;">
   
   <!-- Agrega esto justo debajo del campo de búsqueda -->
   <select id="filtroSubcategoria" style="width:100%; padding:8px; margin-bottom:20px;">
@@ -47,12 +47,6 @@
     <button onclick="enviarWhatsApp()">Enviar pedido por WhatsApp</button>
   </div>
 
-  <div id="copiaCliente" style="display:none;">
-    <h2>Copia del Pedido</h2>
-    <div id="mensajeCliente"></div>
-    <button onclick="imprimirResumen()" style="margin-top: 10px;">Imprimir resumen</button>
-  </div>
-
   <div style="margin-top: 40px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ccc;">
     <h2>Información de Envíos</h2>
     <p><strong>Costos aproximados:</strong> entre Q25 y Q50 dentro de Ciudad de Guatemala. Para otras zonas, consultar vía WhatsApp.</p>
@@ -60,8 +54,6 @@
   </div>
 
 
-
-<!-- Agrega esto dentro de tu <script> -->
 <script>
   let pedido = [];
   let total = 0;
@@ -134,11 +126,11 @@ function enviarWhatsApp() {
   window.open(url, "_blank");
 
   // Desactivar botón temporalmente
-const boton = document.querySelector("button[onclick='enviarWhatsApp()']");
-boton.disabled = true;
-boton.textContent = "Pedido enviado ✅";
+  const boton = document.querySelector("button[onclick='enviarWhatsApp()']");
+  boton.disabled = true;
+  boton.textContent = "Pedido enviado ✅";
 
-setTimeout(() => {
+  setTimeout(() => {
   boton.disabled = false;
   boton.textContent = "Enviar pedido por WhatsApp";
 }, 4000);
@@ -264,32 +256,6 @@ setTimeout(() => confirmacion.remove(), 4000);
     });
   });
 
-  function imprimirResumen() {
-  const contenido = document.getElementById("mensajeCliente").innerText;
-  const ventana = window.open("", "Resumen del Pedido", "width=600,height=700");
-
-  ventana.document.write(`
-    <html>
-      <head>
-        <title>Resumen del Pedido - Puzzle Solutions</title>
-        <style>
-          body { font-family: 'Poppins', sans-serif; padding: 20px; }
-          h1 { color: #1d3557; }
-          pre { white-space: pre-wrap; font-size: 1em; }
-        </style>
-      </head>
-      <body>
-        <h1>Resumen del Pedido</h1>
-        <pre>${contenido}</pre>
-        <p style="margin-top: 40px; font-size: 0.8em;">© 2025 PuzzleSolutions. Todos los derechos reservados.</p>
-      </body>
-    </html>
-  `);
-
-  ventana.document.close();
-  ventana.print();
-}
-
 function actualizarPedido() {
   const lista = document.getElementById("listaPedido");
   const detalle = document.getElementById("detallePedido");
@@ -352,8 +318,6 @@ function irADetallePedido() {
   }
 }
 
-  
-  
 </script>
  
 <footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
@@ -362,7 +326,7 @@ function irADetallePedido() {
   <p style="margin-top: 10px;">© 2025 PuzzleSolutions. Todos los derechos reservados.</p>
 </footer>
 
-  <!-- Botón flotante de WhatsApp con mensaje -->
+<!-- Botón flotante de WhatsApp con mensaje -->
 <a href="https://wa.me/50241084481?text=Hola%2C%20me%20interesa%20más%20información%20sobre%20los%20productos%20de%20Puzzle%20Solutions" target="_blank" aria-label="Contáctanos por WhatsApp" style="
   position: fixed;
   bottom: 20px;
@@ -384,15 +348,16 @@ function irADetallePedido() {
   </svg>
 </a> 
 
-  <aside id="pedidoVista">
-    <h2>Tu pedido</h2>
-    <ul id="pedidoLista"></ul>
-    <p id="pedidoTotal">Total: Q0.00</p>
-    <button onclick="irADetallePedido()" style="margin-top: 10px;">Finalizar pedido</button>
-  </aside>
+<aside id="pedidoVista">
+  <h2>Tu pedido</h2>
+  <ul id="pedidoLista"></ul>
+  <p id="pedidoTotal">Total: Q0.00</p>
+  <button onclick="irADetallePedido()" style="margin-top: 10px;">Finalizar pedido</button>
+</aside>
   
 </body>
 </html>
+
 
 
 
