@@ -313,6 +313,10 @@ function actualizarPedido() {
     detalle.innerHTML = `<p><strong>Productos en el pedido:</strong><br>${resumen}</p>`;
   }
 
+  // 👇 Esta línea activa el <aside>
+  actualizarVistaPedido();
+}
+
   function actualizarVistaPedido() {
   const lista = document.getElementById("pedidoLista");
   const totalTexto = document.getElementById("pedidoTotal");
@@ -374,6 +378,7 @@ function actualizarPedido() {
   
 </body>
 </html>
+
 
 
 
