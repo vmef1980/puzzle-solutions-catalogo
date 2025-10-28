@@ -12,7 +12,7 @@ function aplicarFiltroSubcategoria() {
   });
 }
 
-fetch('Catalogo-v3.csv')
+fetch('data/Catalogo-v3.csv')
   .then(response => response.text())
   .then(csv => {
     Papa.parse(csv, {
@@ -81,3 +81,4 @@ document.getElementById("busqueda").addEventListener("input", e => {
     p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
   });
 });
+
