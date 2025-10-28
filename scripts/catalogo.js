@@ -53,15 +53,58 @@ fetch('data/Catalogo-v3.csv')
             const div = document.createElement("div");
             div.className = "producto";
 
-            div.innerHTML = `
-              <img src="${producto.imagen}" alt="${producto['nombre del producto']}">
-              <h3>${producto['nombre del producto']}</h3>
-              <p style="font-size: 0.5em; color: #FFF;">Código: ${producto.codigo}</p>
-              <p>Q${producto['precio (q)']}</p>
-              <p style="font-size: 0.9em; color: #555;">${producto.descripcion}</p>
-              <label for="cantidad${idCounter}" style="display:block; margin-top:8px;">Cantidad:</label>
-              <input type="number" id="cantidad${idCounter}" min="1" value="1" style="width: 60px;">
-            `;
+            const img = document.createElement("img");
+img.src = producto.imagen;
+img.alt = producto["nombre del producto"];
+
+const h3 = document.createElement("h3");
+h3.textContent = producto["nombre del producto"];
+
+const codigo = document.createElement("p");
+codigo.textContent = `Código: ${producto.codigo}`;
+codigo.style.fontSize = "0.5em";
+codigo.style.color = "#FFF";
+
+const precio = document.createElement("p");
+precio.textContent = `Q${producto["precio (q)"]}`;
+
+const descripcion = document.createElement("p");
+descripcion.textContent = producto.descripcion;
+descripcion.style.fontSize = "0.9em";
+descripcion.style.color = "#555";
+
+const label = document.createElement("label");
+label.setAttribute("for", `cantidad${idCounter}`);
+label.textContent = "Cantidad:";
+label.style.display = "block";
+label.style.marginTop = "8px";
+
+const input = document.createElement("input");
+input.type = "number";
+input.id = `cantidad${idCounter}`;
+input.min = "1";
+input.value = "1";
+input.style.width = "60px";
+
+const boton = document.createElement("button");
+boton.textContent = "Agregar";
+boton.addEventListener("click", () => {
+  agregar(
+    producto["nombre del producto"],
+    parseFloat(producto["precio (q)"]),
+    input.id,
+    producto.codigo
+  );
+});
+
+div.appendChild(img);
+div.appendChild(h3);
+div.appendChild(codigo);
+div.appendChild(precio);
+div.appendChild(descripcion);
+div.appendChild(label);
+div.appendChild(input);
+div.appendChild(boton);
 
             const boton = document.createElement("button");
             boton.textContent = "Agregar";
@@ -94,4 +137,5 @@ document.getElementById("busqueda").addEventListener("input", e => {
     p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
   });
 });
+
 
