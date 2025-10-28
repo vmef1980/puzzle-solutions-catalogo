@@ -1,84 +1,83 @@
-export let pedido = [];
-export let total = 0;
+import { agregar } from './pedido.js';
 
-export function agregar(nombre, precio, inputId, codigo) {
-  const cantidad = parseInt(document.getElementById(inputId).value);
-  if (isNaN(cantidad) || cantidad < 1) return;
-
-  const existente = pedido.find(p => p.codigo === codigo);
-  if (existente) {
-    existente.cantidad += cantidad;
-  } else {
-    pedido.push({ nombre, precio, cantidad, codigo });
-  }
-
-  actualizarPedido();
-  mostrarMensajeAgregado();
+function aplicarFiltroSubcategoria() {
+  const seleccionada = document.getElementById("filtroSubcategoria").value;
+  document.querySelectorAll("#catalogo > div").forEach(section => {
+    const titulo = section.querySelector("h2");
+    if (!seleccionada || (titulo && titulo.textContent === seleccionada)) {
+      section.style.display = "block";
+    } else {
+      section.style.display = "none";
+    }
+  });
 }
 
-export function eliminarProducto(index) {
-  pedido.splice(index, 1);
-  actualizarPedido();
-}
+fetch('Catalogo-v3.csv')
+  .then(response => response.text())
+  .then(csv => {
+    Papa.parse(csv, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        results.data = results.data.map(row => {
+          const normalizado = {};
+          Object.keys(row).forEach(key => {
+            normalizado[key.trim().toLowerCase()] = row[key];
+          });
+          return normalizado;
+        });
 
-export function actualizarPedido() {
-  const lista = document.getElementById("listaPedido");
-  const detalle = document.getElementById("detallePedido");
-  lista.innerHTML = "";
-  detalle.innerHTML = "";
-  total = 0;
+        const catalogo = document.getElementById("catalogo");
+        const grupos = {};
+        results.data.forEach(producto => {
+          if (!producto || !producto.estado || producto.estado.trim().toLowerCase() !== "disponible") return;
+          const cat = producto.subcategoria || "Otros";
+          if (!grupos[cat]) grupos[cat] = [];
+          grupos[cat].push(producto);
+        });
 
-  pedido.forEach((p, index) => {
-    const subtotal = (p.precio * p.cantidad).toFixed(2);
-    const item = document.createElement("li");
-    item.innerHTML = `[${p.codigo}] ${p.nombre} x${p.cantidad} = Q${subtotal}
-    <button onclick="eliminarProducto(${index})">❌</button>`;
-    lista.appendChild(item);
-    total += p.precio * p.cantidad;
+        const filtro = document.getElementById("filtroSubcategoria");
+        Object.keys(grupos).sort().forEach(subcat => {
+          const option = document.createElement("option");
+          option.value = subcat;
+          option.textContent = subcat;
+          filtro.appendChild(option);
+        });
+        filtro.addEventListener("change", aplicarFiltroSubcategoria);
+
+        let idCounter = 1;
+        Object.keys(grupos).forEach(subcategoria => {
+          const section = document.createElement("div");
+          section.innerHTML = `<h2>${subcategoria}</h2>`;
+          grupos[subcategoria].forEach(producto => {
+            const div = document.createElement("div");
+            div.className = "producto";
+            div.innerHTML = `
+              <img src="${producto.imagen}" alt="${producto['nombre del producto']}">
+              <h3>${producto['nombre del producto']}</h3>
+              <p style="font-size: 0.5em; color: #FFF;">Código: ${producto.codigo}</p>
+              <p>Q${producto['precio (q)']}</p>
+              <p style="font-size: 0.9em; color: #555;">${producto.descripcion}</p>
+              <label for="cantidad${idCounter}" style="display:block; margin-top:8px;">Cantidad:</label>
+              <input type="number" id="cantidad${idCounter}" min="1" value="1" style="width: 60px;">
+              <button onclick="agregar('${producto['nombre del producto']}', ${producto['precio (q)']}, 'cantidad${idCounter}', '${producto.codigo}')">Agregar</button>
+            `;
+            section.appendChild(div);
+            idCounter++;
+          });
+          catalogo.appendChild(section);
+        });
+      }
+    });
+  })
+  .catch(error => {
+    console.error("Error al cargar el archivo CSV:", error);
+    document.getElementById("catalogo").innerHTML = "<p style='color:red;'>No se pudo cargar el catálogo.</p>";
   });
 
-  document.getElementById("total").textContent = total.toFixed(2);
-
-  if (pedido.length > 0) {
-    const resumen = pedido.map(p => `• ${p.nombre} x${p.cantidad}`).join("<br>");
-    detalle.innerHTML = `<p><strong>Productos en el pedido:</strong><br>${resumen}</p>`;
-  }
-
-  actualizarVistaPedido();
-}
-
-function mostrarMensajeAgregado() {
-  const msg = document.createElement("div");
-  msg.textContent = "Artículo añadido a tu pedido.";
-  msg.className = "mensaje-agregado";
-  document.body.appendChild(msg);
-  setTimeout(() => msg.remove(), 2000);
-}
-
-function actualizarVistaPedido() {
-  const lista = document.getElementById("pedidoLista");
-  const totalTexto = document.getElementById("pedidoTotal");
-
-  if (!lista || !totalTexto) return;
-
-  lista.innerHTML = "";
-  let totalVista = 0;
-
-  pedido.forEach(p => {
-    const subtotal = (p.precio * p.cantidad).toFixed(2);
-    const item = document.createElement("li");
-    item.textContent = `${p.nombre} x${p.cantidad} = Q${subtotal}`;
-    lista.appendChild(item);
-    totalVista += p.precio * p.cantidad;
+document.getElementById("busqueda").addEventListener("input", e => {
+  const texto = e.target.value.toLowerCase();
+  document.querySelectorAll(".producto").forEach(p => {
+    p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
   });
-
-  totalTexto.textContent = `Total: Q${totalVista.toFixed(2)}`;
-}
-
-export function irADetallePedido() {
-  const detalle = document.getElementById("detallePedido");
-  const aside = document.getElementById("pedidoVista");
-
-  if (detalle) detalle.scrollIntoView({ behavior: "smooth" });
-  if (aside) aside.style.display = "none";
-}
+});
