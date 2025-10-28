@@ -27,7 +27,8 @@
   <div id="pedido">
     <h2>Resumen del Pedido</h2>
     <ul id="listaPedido"></ul>
-    <p><strong>Total: Q<span id="total">0</span></strong></p>
+    <p><strong>Total pendiente: Q<span id="total">0</span></strong></p>
+    <div id="detallePedido" style="margin-top: 10px;"></div>
   </div>
   
   <div id="formulario">
@@ -72,20 +73,29 @@
     mostrarMensajeAgregado();
   }
 
-  function actualizarPedido() {
-    const lista = document.getElementById("listaPedido");
-    lista.innerHTML = "";
-    total = 0;
-    pedido.forEach((p, index) => {
-      const item = document.createElement("li");
-      item.innerHTML = `[${p.codigo}] ${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}
-        <button onclick="eliminarProducto(${index})">❌</button>`;
-      lista.appendChild(item);
-      total += p.precio * p.cantidad;
-    });
-    document.getElementById("total").textContent = total;
-    document.getElementById("pedidoTotal").textContent = `Total: Q${total.toFixed(2)}`;
+function actualizarPedido() {
+  const lista = document.getElementById("listaPedido");
+  const detalle = document.getElementById("detallePedido");
+  lista.innerHTML = "";
+  detalle.innerHTML = "";
+  total = 0;
+
+  pedido.forEach((p, index) => {
+    const item = document.createElement("li");
+    item.innerHTML = `[${p.codigo}] ${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}
+      <button onclick="eliminarProducto(${index})">❌</button>`;
+    lista.appendChild(item);
+    total += p.precio * p.cantidad;
+  });
+
+  document.getElementById("total").textContent = total.toFixed(2);
+
+  // Mostrar resumen de productos y cantidades
+  if (pedido.length > 0) {
+    const resumen = pedido.map(p => `• ${p.nombre} x${p.cantidad}`).join("<br>");
+    detalle.innerHTML = `<p><strong>Productos en el pedido:</strong><br>${resumen}</p>`;
   }
+}
 
   function eliminarProducto(index) {
     pedido.splice(index, 1);
@@ -223,6 +233,7 @@
   
 </body>
 </html>
+
 
 
 
