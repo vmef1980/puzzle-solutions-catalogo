@@ -50,6 +50,7 @@
   <div id="copiaCliente" style="display:none;">
     <h2>Copia del Pedido</h2>
     <div id="mensajeCliente"></div>
+    <button onclick="imprimirResumen()" style="margin-top: 10px;">Imprimir resumen</button>
   </div>
 
   <div style="margin-top: 40px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ccc;">
@@ -262,6 +263,33 @@ setTimeout(() => confirmacion.remove(), 4000);
       p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
     });
   });
+
+  function imprimirResumen() {
+  const contenido = document.getElementById("mensajeCliente").innerText;
+  const ventana = window.open("", "Resumen del Pedido", "width=600,height=700");
+
+  ventana.document.write(`
+    <html>
+      <head>
+        <title>Resumen del Pedido - Puzzle Solutions</title>
+        <style>
+          body { font-family: 'Poppins', sans-serif; padding: 20px; }
+          h1 { color: #1d3557; }
+          pre { white-space: pre-wrap; font-size: 1em; }
+        </style>
+      </head>
+      <body>
+        <h1>Resumen del Pedido</h1>
+        <pre>${contenido}</pre>
+        <p style="margin-top: 40px; font-size: 0.8em;">© 2025 PuzzleSolutions. Todos los derechos reservados.</p>
+      </body>
+    </html>
+  `);
+
+  ventana.document.close();
+  ventana.print();
+}
+  
 </script>
  
 <footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
@@ -300,6 +328,7 @@ setTimeout(() => confirmacion.remove(), 4000);
   
 </body>
 </html>
+
 
 
 
