@@ -17,6 +17,11 @@
   
   <input type="text" id="busqueda" placeholder="Buscar producto..." style="width:100%; padding:8px; margin-bottom:20px;">
   
+  <!-- Agrega esto justo debajo del campo de búsqueda -->
+  <select id="filtroSubcategoria" style="width:100%; padding:8px; margin-bottom:20px;">
+    <option value="">Todas las subcategorías</option>
+  </select>
+    
   <div id="catalogo"></div>
   
   <div id="pedido">
@@ -53,6 +58,8 @@
   </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+<!-- Agrega esto dentro de tu <script> -->
 <script>
   let pedido = [];
   let total = 0;
@@ -62,6 +69,7 @@
     if (isNaN(cantidad) || cantidad < 1) return;
     pedido.push({ nombre, precio, cantidad, codigo });
     actualizarPedido();
+    mostrarMensajeAgregado();
   }
 
   function actualizarPedido() {
@@ -76,6 +84,7 @@
       total += p.precio * p.cantidad;
     });
     document.getElementById("total").textContent = total;
+    document.getElementById("pedidoTotal").textContent = `Total: Q${total.toFixed(2)}`;
   }
 
   function eliminarProducto(index) {
@@ -83,39 +92,28 @@
     actualizarPedido();
   }
 
-  function enviarWhatsApp() {
-    const nombre = document.getElementById("nombre").value.trim();
-    const telefono = document.getElementById("telefono").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const direccion = document.getElementById("direccion").value.trim();
-    const pago = document.getElementById("pago").value;
-    const comentarios = document.getElementById("comentarios").value.trim();
-
-    if (!nombre || !telefono || !email || !direccion || !pago || pedido.length === 0) {
-      alert("Por favor completa todos los campos obligatorios y agrega al menos un producto.");
-      return;
-    }
-
-    if (!confirm("¿Estás seguro de que deseas confirmar tu pedido?")) return;
-
-    let mensaje = "Hola, quiero hacer un pedido:\n";
-    pedido.forEach(p => {
-      mensaje += `- [${p.codigo}] ${p.nombre} x${p.cantidad} Q${p.precio * p.cantidad}\n`;
-    });
-    mensaje += `Total: Q${total}\n\n`;
-    mensaje += `Nombre: ${nombre}\nTel: ${telefono}\nEmail: ${email}\nDirección: ${direccion}\nPago: ${pago}`;
-    if (comentarios !== "") {
-      mensaje += `\nComentarios: ${comentarios}`;
-    }
-
-    const url = `https://wa.me/50241084481?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, "_blank");
-
-    document.getElementById("mensajeCliente").textContent = mensaje;
-    document.getElementById("copiaCliente").style.display = "block";
+  function mostrarMensajeAgregado() {
+    const msg = document.createElement("div");
+    msg.textContent = "Artículo añadido a tu pedido.";
+    msg.className = "mensaje-agregado";
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 2000);
   }
 
-  // Cargar productos desde CSV y agrupar por subcategoría
+  // Filtro por subcategoría
+  function aplicarFiltroSubcategoria() {
+    const seleccionada = document.getElementById("filtroSubcategoria").value;
+    document.querySelectorAll("#catalogo > div").forEach(section => {
+      const titulo = section.querySelector("h2");
+      if (!seleccionada || (titulo && titulo.textContent === seleccionada)) {
+        section.style.display = "block";
+      } else {
+        section.style.display = "none";
+      }
+    });
+  }
+
+  // Cargar productos desde CSV
   fetch('Catalogo-v3.csv')
     .then(response => response.text())
     .then(csv => {
@@ -123,7 +121,6 @@
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-          // Normalizar encabezados a minúsculas
           results.data = results.data.map(row => {
             const normalizado = {};
             Object.keys(row).forEach(key => {
@@ -141,6 +138,16 @@
             grupos[cat].push(producto);
           });
 
+          // Llenar combo box
+          const filtro = document.getElementById("filtroSubcategoria");
+          Object.keys(grupos).sort().forEach(subcat => {
+            const option = document.createElement("option");
+            option.value = subcat;
+            option.textContent = subcat;
+            filtro.appendChild(option);
+          });
+          filtro.addEventListener("change", aplicarFiltroSubcategoria);
+
           let idCounter = 1;
           Object.keys(grupos).forEach(subcategoria => {
             const section = document.createElement("div");
@@ -151,10 +158,10 @@
               div.innerHTML = `
                 <img src="${producto.imagen}" alt="${producto['nombre del producto']}">
                 <h3>${producto['nombre del producto']}</h3>
-                <p style="font-size: 0.5em; color: #777; user-select: none;">Código: ${producto.codigo}</p>
+                <p style="font-size: 0.5em; color: #777;">Código: ${producto.codigo}</p>
                 <p>Q${producto['precio (q)']}</p>
                 <p style="font-size: 0.9em; color: #555;">${producto.descripcion}</p>
-                <label for="cantidad${idCounter}" style="display:block; margin-top:8px; font-weight:500;">Cantidad:</label>
+                <label for="cantidad${idCounter}" style="display:block; margin-top:8px;">Cantidad:</label>
                 <input type="number" id="cantidad${idCounter}" min="1" value="1" style="width: 60px;">
                 <button onclick="agregar('${producto['nombre del producto']}', ${producto['precio (q)']}, 'cantidad${idCounter}', '${producto.codigo}')">Agregar</button>
               `;
@@ -168,15 +175,16 @@
     })
     .catch(error => {
       console.error("Error al cargar el archivo CSV:", error);
-      document.getElementById("catalogo").innerHTML = "<p style='color:red;'>No se pudo cargar el catálogo. Verifica que el archivo Catalogo-v3.csv esté en la raíz del repositorio.</p>";
+      document.getElementById("catalogo").innerHTML = "<p style='color:red;'>No se pudo cargar el catálogo.</p>";
     });
 
-    document.getElementById("busqueda").addEventListener("input", e => {
+  // Búsqueda por texto
+  document.getElementById("busqueda").addEventListener("input", e => {
     const texto = e.target.value.toLowerCase();
     document.querySelectorAll(".producto").forEach(p => {
-    p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
+      p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
     });
-});
+  });
 </script>
  
 <footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
@@ -215,6 +223,7 @@
   
 </body>
 </html>
+
 
 
 
