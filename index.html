@@ -290,22 +290,31 @@ setTimeout(() => confirmacion.remove(), 4000);
   ventana.print();
 }
 
-function actualizarVistaPedido() {
-  const lista = document.getElementById("pedidoLista");
-  const totalTexto = document.getElementById("pedidoTotal");
-
+function actualizarPedido() {
+  const lista = document.getElementById("listaPedido");
+  const detalle = document.getElementById("detallePedido");
   lista.innerHTML = "";
-  let totalVista = 0;
+  detalle.innerHTML = "";
+  total = 0;
 
-  pedido.forEach(p => {
-    const subtotal = (p.precio * p.cantidad).toFixed(2);
+  pedido.forEach((p, index) => {
     const item = document.createElement("li");
-    item.textContent = `${p.nombre} x${p.cantidad} = Q${subtotal}`;
+    const subtotal = (p.precio * p.cantidad).toFixed(2);
+    item.innerHTML = `[${p.codigo}] ${p.nombre} x${p.cantidad} = Q${subtotal}
+    <button onclick="eliminarProducto(${index})">❌</button>`;
     lista.appendChild(item);
-    totalVista += p.precio * p.cantidad;
+    total += p.precio * p.cantidad;
   });
 
-  totalTexto.textContent = `Total: Q${totalVista.toFixed(2)}`;
+  document.getElementById("total").textContent = total.toFixed(2);
+
+  if (pedido.length > 0) {
+    const resumen = pedido.map(p => `• ${p.nombre} x${p.cantidad}`).join("<br>");
+    detalle.innerHTML = `<p><strong>Productos en el pedido:</strong><br>${resumen}</p>`;
+  }
+
+  // 👇 Agrega esta línea al final
+  actualizarVistaPedido();
 }
   
 </script>
@@ -346,6 +355,7 @@ function actualizarVistaPedido() {
   
 </body>
 </html>
+
 
 
 
