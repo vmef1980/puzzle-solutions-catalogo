@@ -60,7 +60,20 @@ fetch('data/Catalogo-v3.csv')
               <p style="font-size: 0.9em; color: #555;">${producto.descripcion}</p>
               <label for="cantidad${idCounter}" style="display:block; margin-top:8px;">Cantidad:</label>
               <input type="number" id="cantidad${idCounter}" min="1" value="1" style="width: 60px;">
-              <button onclick="agregar('${producto['nombre del producto']}', ${producto['precio (q)']}, 'cantidad${idCounter}', '${producto.codigo}')">Agregar</button>
+           
+
+              const boton = document.createElement("button");
+              boton.textContent = "Agregar";
+              boton.addEventListener("click", () => {
+              agregar(
+              producto['nombre del producto'],
+              parseFloat(producto['precio (q)']),
+              `cantidad${idCounter}`,
+              producto.codigo
+              );
+              });
+              div.appendChild(boton);
+              
             `;
             section.appendChild(div);
             idCounter++;
@@ -81,4 +94,5 @@ document.getElementById("busqueda").addEventListener("input", e => {
     p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
   });
 });
+
 
