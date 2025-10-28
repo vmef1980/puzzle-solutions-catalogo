@@ -1,5 +1,5 @@
 export function agregar(nombre, precio, input, codigo) {
-  if (!input || typeof input.value === "undefined") {
+  if (!input || !(input instanceof HTMLInputElement)) {
     console.warn("Input inválido o no encontrado:", input);
     return;
   }
