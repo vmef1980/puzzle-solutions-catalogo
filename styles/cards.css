@@ -1,0 +1,31 @@
+.producto {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.producto img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.producto h3 {
+  margin: 10px 0 5px;
+}
+
+.producto button {
+  background-color: #1d3557;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.producto button:hover {
+  background-color: #457b9d;
+}
