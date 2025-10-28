@@ -7,26 +7,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <link rel="stylesheet" href="style.css">
- 
 </head>
 
-  <body>
-
-<header>
-  <img src="PuzzleSolutions.png" alt="Logo Puzzle Solutions">
-  <h1>Puzzle Solutions - Catálogo de Productos</h1>
-</header>
-
-<input type="text" id="busqueda" placeholder="Buscar producto..." style="width:100%; padding:8px; margin-bottom:20px;">
-
-<div id="catalogo"></div>
-
+<body>
+  <header>
+    <img src="PuzzleSolutions.png" alt="Logo Puzzle Solutions">
+    <h1>Puzzle Solutions - Catálogo de Productos</h1>
+  </header>
+  
+  <input type="text" id="busqueda" placeholder="Buscar producto..." style="width:100%; padding:8px; margin-bottom:20px;">
+  
+  <div id="catalogo"></div>
+  
   <div id="pedido">
     <h2>Resumen del Pedido</h2>
     <ul id="listaPedido"></ul>
     <p><strong>Total: Q<span id="total">0</span></strong></p>
   </div>
-
+  
   <div id="formulario">
     <h2>Datos del Cliente</h2>
     <input type="text" id="nombre" placeholder="Nombre completo" required>
@@ -179,7 +177,6 @@
     p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
     });
 });
-
 </script>
  
 <footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
@@ -210,15 +207,15 @@
   </svg>
 </a> 
 
-<aside id="pedidoVista">
-  <h2>Tu pedido</h2>
-  <ul id="pedidoLista"></ul>
-  <p id="pedidoTotal">Total: Q0.00</p>
-</aside>
-
-    
+  <aside id="pedidoVista">
+    <h2>Tu pedido</h2>
+    <ul id="pedidoLista"></ul>
+    <p id="pedidoTotal">Total: Q0.00</p>
+  </aside>
+  
 </body>
 </html>
+
 
 
 
