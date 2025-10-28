@@ -339,13 +339,13 @@ function actualizarVistaPedido() {
   totalTexto.textContent = `Total: Q${totalVista.toFixed(2)}`;
 }
 
-  function irAlResumen() {
-  const resumen = document.getElementById("copiaCliente");
-  if (resumen) {
-    resumen.style.display = "block"; // por si está oculto
-    resumen.scrollIntoView({ behavior: "smooth" });
+function irADetallePedido() {
+  const detalle = document.getElementById("detallePedido");
+  if (detalle) {
+    detalle.scrollIntoView({ behavior: "smooth" });
   }
 }
+
   
   
 </script>
@@ -382,11 +382,12 @@ function actualizarVistaPedido() {
     <h2>Tu pedido</h2>
     <ul id="pedidoLista"></ul>
     <p id="pedidoTotal">Total: Q0.00</p>
-    <button onclick="irAlResumen()" style="margin-top: 10px;">Finalizar pedido</button>
+    <button onclick="irADetallePedido()" style="margin-top: 10px;">Finalizar pedido</button>
   </aside>
   
 </body>
 </html>
+
 
 
 
