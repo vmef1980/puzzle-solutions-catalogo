@@ -82,3 +82,4 @@ export function irADetallePedido() {
   if (detalle) detalle.scrollIntoView({ behavior: "smooth" });
   if (aside) aside.style.display = "none";
 }
+
