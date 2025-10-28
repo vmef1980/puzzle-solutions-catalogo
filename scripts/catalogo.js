@@ -54,68 +54,70 @@ fetch('data/Catalogo-v3.csv')
             div.className = "producto";
 
             const img = document.createElement("img");
-img.src = producto.imagen;
-img.alt = producto["nombre del producto"];
+            img.src = producto.imagen;
+            img.alt = producto["nombre del producto"];
 
-const h3 = document.createElement("h3");
-h3.textContent = producto["nombre del producto"];
+            const h3 = document.createElement("h3");
+            h3.textContent = producto["nombre del producto"];
 
-const codigo = document.createElement("p");
-codigo.textContent = `Código: ${producto.codigo}`;
-codigo.style.fontSize = "0.5em";
-codigo.style.color = "#FFF";
+          const codigo = document.createElement("p");
+          codigo.textContent = `Código: ${producto.codigo}`;
+          codigo.style.fontSize = "0.5em";
+          codigo.style.color = "#FFF";
 
-const precio = document.createElement("p");
-precio.textContent = `Q${producto["precio (q)"]}`;
+          const precio = document.createElement("p");
+          precio.textContent = `Q${producto["precio (q)"]}`;
 
-const descripcion = document.createElement("p");
-descripcion.textContent = producto.descripcion;
-descripcion.style.fontSize = "0.9em";
-descripcion.style.color = "#555";
+          const descripcion = document.createElement("p");
+          descripcion.textContent = producto.descripcion;
+          descripcion.style.fontSize = "0.9em";
+          descripcion.style.color = "#555";
 
-const label = document.createElement("label");
-label.setAttribute("for", `cantidad${idCounter}`);
-label.textContent = "Cantidad:";
-label.style.display = "block";
-label.style.marginTop = "8px";
+          const label = document.createElement("label");
+          label.setAttribute("for", `cantidad${idCounter}`);
+          label.textContent = "Cantidad:";
+          label.style.display = "block";
+          label.style.marginTop = "8px";
 
-const input = document.createElement("input");
-input.type = "number";
-input.id = `cantidad${idCounter}`;
-input.min = "1";
-input.value = "1";
-input.style.width = "60px";
+          const input = document.createElement("input");
+          input.type = "number";
+          input.id = `cantidad${idCounter}`;
+          input.min = "1";
+          input.value = "1";
+          input.style.width = "60px";
 
-const boton = document.createElement("button");
-boton.textContent = "Agregar";
-boton.addEventListener("click", () => {
-  agregar(
-    producto["nombre del producto"],
-    parseFloat(producto["precio (q)"]),
-    input.id,
-    producto.codigo
-  );
-});
+          const boton = document.createElement("button");
+          boton.textContent = "Agregar";
+          boton.addEventListener("click", () => {
+          agregar(
+          producto["nombre del producto"],
+          parseFloat(producto["precio (q)"]),
+          input.id,
+          producto.codigo
+          );
+          });
 
-div.appendChild(img);
-div.appendChild(h3);
-div.appendChild(codigo);
-div.appendChild(precio);
-div.appendChild(descripcion);
-div.appendChild(label);
-div.appendChild(input);
-div.appendChild(boton);
+          div.appendChild(img);
+          div.appendChild(h3);
+          div.appendChild(codigo);
+          div.appendChild(precio);
+          div.appendChild(descripcion);
+          div.appendChild(label);
+          div.appendChild(input);
+          div.appendChild(boton);
 
             const boton = document.createElement("button");
             boton.textContent = "Agregar";
             boton.addEventListener("click", () => {
             agregar(
-            producto['nombre del producto'],
-            parseFloat(producto['precio (q)']),
-            `cantidad${idCounter}`,
+            producto["nombre del producto"],
+            parseFloat(producto["precio (q)"]),
+            input, // ← pasamos el elemento directamente
             producto.codigo
             );
             });
+
+            
             div.appendChild(boton);
 
             section.appendChild(div);
@@ -137,5 +139,6 @@ document.getElementById("busqueda").addEventListener("input", e => {
     p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
   });
 });
+
 
 
