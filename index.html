@@ -65,13 +65,21 @@
   let pedido = [];
   let total = 0;
 
-  function agregar(nombre, precio, inputId, codigo) {
-    const cantidad = parseInt(document.getElementById(inputId).value);
-    if (isNaN(cantidad) || cantidad < 1) return;
+function agregar(nombre, precio, inputId, codigo) {
+  const cantidad = parseInt(document.getElementById(inputId).value);
+  if (isNaN(cantidad) || cantidad < 1) return;
+
+  // Verificar si el producto ya está en el pedido
+  const existente = pedido.find(p => p.codigo === codigo);
+  if (existente) {
+    existente.cantidad += cantidad;
+  } else {
     pedido.push({ nombre, precio, cantidad, codigo });
-    actualizarPedido();
-    mostrarMensajeAgregado();
   }
+
+  actualizarPedido();
+  mostrarMensajeAgregado();
+}
 
 function actualizarPedido() {
   const lista = document.getElementById("listaPedido");
@@ -82,8 +90,9 @@ function actualizarPedido() {
 
   pedido.forEach((p, index) => {
     const item = document.createElement("li");
-    item.innerHTML = `[${p.codigo}] ${p.nombre} x${p.cantidad} - Q${p.precio * p.cantidad}
-      <button onclick="eliminarProducto(${index})">❌</button>`;
+    const subtotal = (p.precio * p.cantidad).toFixed(2);
+    item.innerHTML = `[${p.codigo}] ${p.nombre} x${p.cantidad} = Q${subtotal}
+    <button onclick="eliminarProducto(${index})">❌</button>`;
     lista.appendChild(item);
     total += p.precio * p.cantidad;
   });
@@ -233,6 +242,7 @@ function actualizarPedido() {
   
 </body>
 </html>
+
 
 
 
