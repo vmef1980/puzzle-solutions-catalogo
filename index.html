@@ -341,8 +341,14 @@ function actualizarVistaPedido() {
 
 function irADetallePedido() {
   const detalle = document.getElementById("detallePedido");
+  const aside = document.getElementById("pedidoVista");
+
   if (detalle) {
     detalle.scrollIntoView({ behavior: "smooth" });
+  }
+
+  if (aside) {
+    aside.style.display = "none"; // Oculta el resumen lateral
   }
 }
 
@@ -387,6 +393,7 @@ function irADetallePedido() {
   
 </body>
 </html>
+
 
 
 
