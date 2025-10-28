@@ -66,12 +66,12 @@ fetch('data/Catalogo-v3.csv')
             const boton = document.createElement("button");
             boton.textContent = "Agregar";
             boton.addEventListener("click", () => {
-              agregar(
-                producto['nombre del producto'],
-                parseFloat(producto['precio (q)']),
-                `cantidad${idCounter}`,
-                producto.codigo
-              );
+            agregar(
+            producto['nombre del producto'],
+            parseFloat(producto['precio (q)']),
+            `cantidad${idCounter}`,
+            producto.codigo
+            );
             });
             div.appendChild(boton);
 
@@ -94,3 +94,4 @@ document.getElementById("busqueda").addEventListener("input", e => {
     p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
   });
 });
+
