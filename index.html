@@ -184,7 +184,7 @@ setTimeout(() => confirmacion.remove(), 4000);
   }
 
   // Cargar productos desde CSV
-  fetch('Catalogo-v3.csv')
+  fetch('./data/Catalogo-v3.csv')
     .then(response => response.text())
     .then(csv => {
       Papa.parse(csv, {
@@ -357,6 +357,7 @@ function irADetallePedido() {
   
 </body>
 </html>
+
 
 
 
