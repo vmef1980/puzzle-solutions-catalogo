@@ -1,4 +1,4 @@
-import { pedido, total } from './pedido.js';
+import { pedido, total } from 'scripts/pedido.js';
 
 export function enviarWhatsApp() {
   const nombre = document.getElementById("nombre").value.trim();
@@ -55,3 +55,4 @@ export function enviarWhatsApp() {
 
   setTimeout(() => confirmacion.remove(), 4000);
 }
+
