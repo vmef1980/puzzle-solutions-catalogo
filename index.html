@@ -4,14 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Puzzle Solutions - Catálogo</title>
-  
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/layout.css">
-  <link rel="stylesheet" href="styles/cards.css">
-  <link rel="stylesheet" href="styles/aside.css">
-  <link rel="stylesheet" href="styles/form.css">
-  <link rel="stylesheet" href="styles/main.css">
-  
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 
@@ -59,10 +53,273 @@
     <p><strong>Disponibilidad:</strong> La existencia puede variar según la demanda. Te confirmaremos disponibilidad al recibir tu pedido.</p>
   </div>
 
-  <script type="module" src="scripts/catalogo.js"></script>
-  <script type="module" src="scripts/pedido.js"></script>
-  <script type="module" src="scripts/formulario.js"></script>
 
+<script>
+  let pedido = [];
+  let total = 0;
+
+function agregar(nombre, precio, inputId, codigo) {
+  const cantidad = parseInt(document.getElementById(inputId).value);
+  if (isNaN(cantidad) || cantidad < 1) return;
+
+  // Verificar si el producto ya está en el pedido
+  const existente = pedido.find(p => p.codigo === codigo);
+  if (existente) {
+    existente.cantidad += cantidad;
+  } else {
+    pedido.push({ nombre, precio, cantidad, codigo });
+  }
+
+  actualizarPedido();
+  mostrarMensajeAgregado();
+}
+
+function actualizarPedido() {
+  const lista = document.getElementById("listaPedido");
+  const detalle = document.getElementById("detallePedido");
+  lista.innerHTML = "";
+  detalle.innerHTML = "";
+  total = 0;
+
+  pedido.forEach((p, index) => {
+    const item = document.createElement("li");
+    const subtotal = (p.precio * p.cantidad).toFixed(2);
+    item.innerHTML = `[${p.codigo}] ${p.nombre} x${p.cantidad} = Q${subtotal}
+    <button onclick="eliminarProducto(${index})">❌</button>`;
+    lista.appendChild(item);
+    total += p.precio * p.cantidad;
+  });
+
+  document.getElementById("total").textContent = total.toFixed(2);
+
+  // Mostrar resumen de productos y cantidades
+  if (pedido.length > 0) {
+    const resumen = pedido.map(p => `• ${p.nombre} x${p.cantidad}`).join("<br>");
+    detalle.innerHTML = `<p><strong>Productos en el pedido:</strong><br>${resumen}</p>`;
+  }
+}
+
+function enviarWhatsApp() {
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const direccion = document.getElementById("direccion").value.trim();
+  const pago = document.getElementById("pago").value;
+  const comentarios = document.getElementById("comentarios").value.trim();
+
+  if (!nombre || !telefono || !email || !direccion || !pago) {
+    alert("Por favor completa todos los campos obligatorios.");
+    return;
+  }
+
+  if (pedido.length === 0) {
+    alert("No has agregado productos al pedido.");
+    return;
+  }
+
+  const resumen = pedido.map(p => `• ${p.nombre} x${p.cantidad} (Q${(p.precio * p.cantidad).toFixed(2)})`).join("\n");
+  const totalTexto = `Total: Q${total.toFixed(2)}`;
+
+  const mensaje = `Hola, quiero hacer un pedido:\n\n${resumen}\n${totalTexto}\n\nDatos del cliente:\n• Nombre: ${nombre}\n• Teléfono: ${telefono}\n• Email: ${email}\n• Dirección: ${direccion}\n• Pago: ${pago}\n• Comentarios: ${comentarios || "Ninguno"}`;
+
+  const url = `https://wa.me/50241084481?text=${encodeURIComponent(mensaje)}`;
+  window.open(url, "_blank");
+
+  // Desactivar botón temporalmente
+  const boton = document.querySelector("button[onclick='enviarWhatsApp()']");
+  boton.disabled = true;
+  boton.textContent = "Pedido enviado ✅";
+
+  setTimeout(() => {
+  boton.disabled = false;
+  boton.textContent = "Enviar pedido por WhatsApp";
+}, 4000);
+
+// Mostrar mensaje flotante
+const confirmacion = document.createElement("div");
+confirmacion.textContent = "¡Tu pedido está listo para enviar por WhatsApp!";
+confirmacion.style.position = "fixed";
+confirmacion.style.bottom = "80px";
+confirmacion.style.right = "20px";
+confirmacion.style.background = "#25D366";
+confirmacion.style.color = "white";
+confirmacion.style.padding = "12px 16px";
+confirmacion.style.borderRadius = "8px";
+confirmacion.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
+confirmacion.style.zIndex = "9999";
+document.body.appendChild(confirmacion);
+
+setTimeout(() => confirmacion.remove(), 4000);
+
+  // Mostrar copia al cliente
+  document.getElementById("mensajeCliente").innerText = mensaje;
+  document.getElementById("copiaCliente").style.display = "block";
+}  
+
+  
+  function eliminarProducto(index) {
+    pedido.splice(index, 1);
+    actualizarPedido();
+  }
+
+  function mostrarMensajeAgregado() {
+    const msg = document.createElement("div");
+    msg.textContent = "Artículo añadido a tu pedido.";
+    msg.className = "mensaje-agregado";
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 2000);
+  }
+
+  // Filtro por subcategoría
+  function aplicarFiltroSubcategoria() {
+    const seleccionada = document.getElementById("filtroSubcategoria").value;
+    document.querySelectorAll("#catalogo > div").forEach(section => {
+      const titulo = section.querySelector("h2");
+      if (!seleccionada || (titulo && titulo.textContent === seleccionada)) {
+        section.style.display = "block";
+      } else {
+        section.style.display = "none";
+      }
+    });
+  }
+
+  // Cargar productos desde CSV
+  fetch('Catalogo-v3.csv')
+    .then(response => response.text())
+    .then(csv => {
+      Papa.parse(csv, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          results.data = results.data.map(row => {
+            const normalizado = {};
+            Object.keys(row).forEach(key => {
+              normalizado[key.trim().toLowerCase()] = row[key];
+            });
+            return normalizado;
+          });
+
+          const catalogo = document.getElementById("catalogo");
+          const grupos = {};
+          results.data.forEach(producto => {
+            if (!producto || !producto.estado || producto.estado.trim().toLowerCase() !== "disponible") return;
+            const cat = producto.subcategoria || "Otros";
+            if (!grupos[cat]) grupos[cat] = [];
+            grupos[cat].push(producto);
+          });
+
+          // Llenar combo box
+          const filtro = document.getElementById("filtroSubcategoria");
+          Object.keys(grupos).sort().forEach(subcat => {
+            const option = document.createElement("option");
+            option.value = subcat;
+            option.textContent = subcat;
+            filtro.appendChild(option);
+          });
+          filtro.addEventListener("change", aplicarFiltroSubcategoria);
+
+          let idCounter = 1;
+          Object.keys(grupos).forEach(subcategoria => {
+            const section = document.createElement("div");
+            section.innerHTML = `<h2>${subcategoria}</h2>`;
+            grupos[subcategoria].forEach(producto => {
+              const div = document.createElement("div");
+              div.className = "producto";
+              div.innerHTML = `
+                <img src="${producto.imagen}" alt="${producto['nombre del producto']}">
+                <h3>${producto['nombre del producto']}</h3>
+                <p style="font-size: 0.5em; color: #FFF;">Código: ${producto.codigo}</p>
+                <p>Q${producto['precio (q)']}</p>
+                <p style="font-size: 0.9em; color: #555;">${producto.descripcion}</p>
+                <label for="cantidad${idCounter}" style="display:block; margin-top:8px;">Cantidad:</label>
+                <input type="number" id="cantidad${idCounter}" min="1" value="1" style="width: 60px;">
+                <button onclick="agregar('${producto['nombre del producto']}', ${producto['precio (q)']}, 'cantidad${idCounter}', '${producto.codigo}')">Agregar</button>
+              `;
+              section.appendChild(div);
+              idCounter++;
+            });
+            catalogo.appendChild(section);
+          });
+        }
+      });
+    })
+    .catch(error => {
+      console.error("Error al cargar el archivo CSV:", error);
+      document.getElementById("catalogo").innerHTML = "<p style='color:red;'>No se pudo cargar el catálogo.</p>";
+    });
+
+  // Búsqueda por texto
+  document.getElementById("busqueda").addEventListener("input", e => {
+    const texto = e.target.value.toLowerCase();
+    document.querySelectorAll(".producto").forEach(p => {
+      p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
+    });
+  });
+
+function actualizarPedido() {
+  const lista = document.getElementById("listaPedido");
+  const detalle = document.getElementById("detallePedido");
+  lista.innerHTML = "";
+  detalle.innerHTML = "";
+  total = 0;
+
+  pedido.forEach((p, index) => {
+    const item = document.createElement("li");
+    const subtotal = (p.precio * p.cantidad).toFixed(2);
+    item.innerHTML = `[${p.codigo}] ${p.nombre} x${p.cantidad} = Q${subtotal}
+    <button onclick="eliminarProducto(${index})">❌</button>`;
+    lista.appendChild(item);
+    total += p.precio * p.cantidad;
+  });
+
+  document.getElementById("total").textContent = total.toFixed(2);
+
+  if (pedido.length > 0) {
+    const resumen = pedido.map(p => `• ${p.nombre} x${p.cantidad}`).join("<br>");
+    detalle.innerHTML = `<p><strong>Productos en el pedido:</strong><br>${resumen}</p>`;
+  }
+
+    actualizarVistaPedido(); // 👈 Esto actualiza el <aside>
+}
+
+function actualizarVistaPedido() {
+  const lista = document.getElementById("pedidoLista");
+  const totalTexto = document.getElementById("pedidoTotal");
+
+  if (!lista || !totalTexto) {
+    console.warn("Elementos de vista de pedido no encontrados.");
+    return;
+  }
+
+  lista.innerHTML = "";
+  let totalVista = 0;
+
+  pedido.forEach(p => {
+    const subtotal = (p.precio * p.cantidad).toFixed(2);
+    const item = document.createElement("li");
+    item.textContent = `${p.nombre} x${p.cantidad} = Q${subtotal}`;
+    lista.appendChild(item);
+    totalVista += p.precio * p.cantidad;
+  });
+
+  totalTexto.textContent = `Total: Q${totalVista.toFixed(2)}`;
+}
+
+function irADetallePedido() {
+  const detalle = document.getElementById("detallePedido");
+  const aside = document.getElementById("pedidoVista");
+
+  if (detalle) {
+    detalle.scrollIntoView({ behavior: "smooth" });
+  }
+
+  if (aside) {
+    aside.style.display = "none"; // Oculta el resumen lateral
+  }
+}
+
+</script>
+ 
 <footer style="margin-top: 60px; padding: 20px; background-color: #1d3557; color: #f1f1f1; text-align: center; font-size: 0.9em; border-top: 4px solid #e63946;">
   <p>Este sitio ha sido desarrollado por <strong>PuzzleSolutions®</strong>, marca registrada.</p>
   <p>Contacto: <a href="mailto:vmef1980@gmail.com" style="color: #f1f1f1; text-decoration: underline;">vmef1980@gmail.com</a></p>
@@ -100,10 +357,6 @@
   
 </body>
 </html>
-
-
-
-
 
 
 
