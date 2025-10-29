@@ -1,3 +1,5 @@
+import { someFunction } from "./scripts/pedido.js";
+
 // pedido.js
 
 // Lista de productos agregados al pedido
@@ -38,3 +40,4 @@ export function limpiarPedido() {
   pedido.length = 0;
   total = 0;
 }
+
