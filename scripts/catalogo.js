@@ -1,4 +1,4 @@
-import { agregar } from './pedido.js';
+import { agregar } from 'scripts/pedido.js';
 
 function aplicarFiltroSubcategoria() {
   const seleccionada = document.getElementById("filtroSubcategoria").value;
@@ -129,3 +129,4 @@ document.getElementById("busqueda").addEventListener("input", e => {
     p.style.display = p.textContent.toLowerCase().includes(texto) ? "block" : "none";
   });
 });
+
