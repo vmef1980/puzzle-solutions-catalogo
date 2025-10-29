@@ -1,12 +1,19 @@
 // pedido.js
 
-// Exportación con nombre: pedido
+// Lista de productos agregados al pedido
 export const pedido = [];
 
-// Exportación con nombre: total
+// Total acumulado del pedido
 export let total = 0;
 
-// Función para agregar productos al pedido
+/**
+ * Agrega un producto al pedido.
+ * @param {Object} producto - El producto a agregar.
+ * @param {string} producto.codigo - Código único del producto.
+ * @param {string} producto.nombre - Nombre del producto.
+ * @param {number} producto.precio - Precio unitario.
+ * @param {number} producto.cantidad - Cantidad deseada.
+ */
 export function agregarProducto(producto) {
   const existente = pedido.find(p => p.codigo === producto.codigo);
   if (existente) {
@@ -17,12 +24,16 @@ export function agregarProducto(producto) {
   actualizarTotal();
 }
 
-// Función para actualizar el total
+/**
+ * Recalcula el total del pedido.
+ */
 export function actualizarTotal() {
   total = pedido.reduce((sum, p) => sum + p.precio * p.cantidad, 0);
 }
 
-// Función opcional para limpiar el pedido
+/**
+ * Limpia el pedido y reinicia el total.
+ */
 export function limpiarPedido() {
   pedido.length = 0;
   total = 0;
